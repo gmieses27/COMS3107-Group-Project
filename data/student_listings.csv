@@ -1,0 +1,4 @@
+ISBN,Title,Edition,Condition,Price,CourseNumber,SellerID,BarterfFlag
+978-0-13-468599-1,Clean Code,2,good,45.99,COMS3107,S001,true
+978-0-13-468599-1,Clean Code,2,fair,38.50,COMS3107,S002,false
+978-0-134-68599-2,The Pragmatic Programmer,2,good,35.75,COMS3107,S003,false
