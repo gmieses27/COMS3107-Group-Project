@@ -8,21 +8,8 @@
 ## Five Core Operations
 1. Total Listings Count
 2. Average Price by Course
-3. Student vs. Market Price Comparison (Multi-source)
-4. Cheapest by Condition (Multi-source)
-5. Market Fairness Score (Multi-source)
-
-## Project Structure
-```
-data/
-├── student_listings.csv
-├── market_prices.csv
-└── book_metadata.csv
-
-src/main/java/com/textbookmarketplace/
-├── Main.java
-├── model/
-│   └── TextbookListing.java
-└── service/
-    └── CSVFileReader.java
-```
+3. Student vs. Market Price Comparison
+4. Cheapest by Condition
+5. Market Fairness Score
+6. Barter Compatibility Finder
+7. Book Demand Index

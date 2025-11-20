@@ -81,7 +81,7 @@ public class Main {
     }
 
     private static void printMenu() {
-        System.out.println("\n===== TEXTBOOK MARKETPLACE - MIDPOINT MENU =====");
+        System.out.println("\n===== TEXTBOOK MARKETPLACE =====");
         System.out.println("1. Total Listings Count");
         System.out.println("2. Average Asking Price by Course");
         System.out.println("3. Student vs. Market Price Comparison");
