@@ -9,9 +9,9 @@ $out = "out"
 if (!(Test-Path $out)) { New-Item -ItemType Directory $out | Out-Null }
 
 Write-Host "Compiling sources..."
-javac -d $out src\main\*.java
+javac -d $out src\marketplace\*.java
 
 if ($LASTEXITCODE -ne 0) { Write-Error "Compilation failed" ; exit 1 }
 
 Write-Host "Running smoke tests..."
-java -cp $out main.TestRunner
+java -cp $out marketplace.TestRunner

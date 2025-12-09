@@ -18,9 +18,9 @@
 
 This project follows a simple 3-tier architecture:
 
-- Presentation (CLI): `src/main/Main.java` — user interaction and program menu
-- Business / Service layer: `src/main/MarketplaceService.java` — core logic and calculations
-- Data / Persistence layer: `src/main/CSVFileReader.java` — CSV parsing and data loading
+- Presentation (CLI): `src/marketplace/Main.java` — user interaction and program menu
+- Business / Service layer: `src/marketplace/MarketplaceService.java` — core logic and calculations
+- Data / Persistence layer: `src/marketplace/CSVFileReader.java` — CSV parsing and data loading
 
 This separation keeps the code clean and easier to test and extend.
 
@@ -30,16 +30,16 @@ You need a Java JDK on your PATH (javac/java). From the project root run:
 
 ```powershell
 # compile
-javac -d out src\main\*.java
+javac -d out src\marketplace\*.java
 
 # run (interactive menu)
-java -cp out main.Main
+java -cp out marketplace.Main
 ```
 
 If you prefer to run a sequence of commands (non-interactive) you can pipe choices on PowerShell:
 
 ```powershell
-"1`n2`n3`n4`n5`n6`n7`n0`n" | java -cp out main.Main
+"1`n2`n3`n4`n5`n6`n7`n0`n" | java -cp out marketplace.Main
 ```
 
 If `javac` or `java` are not found, install a JDK and add it to your PATH before proceeding.
