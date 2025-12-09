@@ -1,6 +1,7 @@
 package marketplace;
 
 import marketplace.data.CSVFileReader;
+import marketplace.data.CSVRepository;
 import marketplace.processor.MarketplaceService;
 
 /**
@@ -14,7 +15,11 @@ public class TestRunner {
             var metadata = CSVFileReader.readBookMetadata("data/book_metadata.csv");
             var market = CSVFileReader.readMarketPrices("data/market_prices.csv");
 
-            MarketplaceService svc = new MarketplaceService(listings, metadata, market);
+            CSVRepository.configure("data/student_listings.csv",
+                    "data/book_metadata.csv", "data/market_prices.csv");
+            CSVRepository data = CSVRepository.getInstance();
+
+            MarketplaceService svc = new MarketplaceService(data);
 
             // smoke checks based on provided sample data
             int total = svc.getTotalListingsCount();
