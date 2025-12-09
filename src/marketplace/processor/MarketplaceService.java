@@ -11,9 +11,11 @@ import java.util.*;
 public class MarketplaceService {
 
     private final CSVRepository repo;
+    private final ServiceCache cache;
 
     public MarketplaceService(CSVRepository repo) {
         this.repo = repo;
+        this.cache = new ServiceCache();
     }
 
     public int getTotalListingsCount() {
@@ -22,6 +24,10 @@ public class MarketplaceService {
 
     //gets the average price by course
     public List<CourseSummary> averagePriceByCourse() {
+        //memoization
+        if(cache.courseSummaries != null){
+            return cache.courseSummaries;
+        }
         Map<String, Double> sum = new HashMap<>();
         Map<String, Integer> cnt = new HashMap<>();
         for (TextbookListing t : repo.getListings()) {
@@ -36,10 +42,14 @@ public class MarketplaceService {
             results.add(new CourseSummary(course, avg, cnt.get(course)));
         }
         results.sort(Comparator.comparing((CourseSummary s) -> s.course));
+        cache.courseSummaries = results;
         return results;
     }
 
     public List<MarketComparison> studentVsMarketComparison() {
+        if(cache.marketComparisons != null){
+            return cache.marketComparisons;
+        }
         Map<String, Double> sum = new HashMap<>();
         Map<String, Integer> cnt = new HashMap<>();
         for (TextbookListing t : repo.getListings()) {
@@ -60,10 +70,14 @@ public class MarketplaceService {
             out.add(new MarketComparison(isbn, title, avgStudent, marketAvg, cnt.get(isbn)));
         }
         out.sort(Comparator.comparing((MarketComparison m) -> m.isbn));
+        cache.marketComparisons = out;
         return out;
     }
 
     public Map<String, TextbookListing> cheapestListingByCondition() {
+        if(cache.cheapestListings != null){
+            return cache.cheapestListings;
+        }
         Map<String, TextbookListing> best = new HashMap<>();
         for (TextbookListing t : repo.getListings()) {
             String cond = (t.getCondition() == null) ? "unknown" : t.getCondition().toLowerCase();
@@ -71,10 +85,14 @@ public class MarketplaceService {
                 best.put(cond, t);
             }
         }
+        cache.cheapestListings = best;
         return best;
     }
 
     public FairnessResult marketFairnessScore() {
+        if(cache.fairnessResult != null){
+            return cache.fairnessResult;
+        }
         int totalComparable = 0;
         int within10 = 0;
         for (TextbookListing t : repo.getListings()) {
@@ -86,10 +104,15 @@ public class MarketplaceService {
             if (rel <= 0.10) within10++;
         }
         double score = (totalComparable == 0) ? 0.0 : ((within10 * 100.0) / totalComparable);
-        return new FairnessResult(totalComparable, within10, score);
+        FairnessResult ans = new FairnessResult(totalComparable, within10, score);
+        cache.fairnessResult = ans;
+        return ans;
     }
 
     public Map<TextbookListing, List<TextbookListing>> barterCompatibilityFinder() {
+        if(cache.barterMatches != null){
+            return cache.barterMatches;
+        }
         Map<String, List<TextbookListing>> byIsbn = new HashMap<>();
         Map<String, List<TextbookListing>> byCourse = new HashMap<>();
         for (TextbookListing t : repo.getListings()) {
@@ -114,33 +137,37 @@ public class MarketplaceService {
             result.put(t, candidates);
         }
 
+        cache.barterMatches = result;
         return result;
     }
 
     public List<DemandEntry> demandIndex(int topN) {
-        Map<String, Integer> counts = new HashMap<>();
-        for (TextbookListing t : repo.getListings()) {
-            String isbn = normalizeIsbn(t.getIsbn());
-            counts.put(isbn, counts.getOrDefault(isbn, 0) + 1);
-        }
-
-        List<Map.Entry<String,Integer>> entries = new ArrayList<>(counts.entrySet());
-        entries.sort((a,b) -> Integer.compare(b.getValue(), a.getValue()));
-
-        int limit = Math.min(topN, entries.size());
-        List<DemandEntry> out = new ArrayList<>();
-        for (int i = 0; i < limit; i++) {
-            Map.Entry<String,Integer> e = entries.get(i);
-            String isbn = e.getKey();
-            int c = e.getValue();
-            String title = "(unknown)";
-            if (repo.getMetadata().containsKey(isbn)) {
-                String[] m = repo.getMetadata().get(isbn);
-                if (m != null && m.length > 0 && !m[0].isEmpty()) title = m[0];
+        if(cache.fullDemandIndex == null) {
+            Map<String, Integer> counts = new HashMap<>();
+            for (TextbookListing t : repo.getListings()) {
+                String isbn = normalizeIsbn(t.getIsbn());
+                counts.put(isbn, counts.getOrDefault(isbn, 0) + 1);
             }
-            out.add(new DemandEntry(isbn, title, c));
+
+            List<Map.Entry<String, Integer>> entries = new ArrayList<>(counts.entrySet());
+            entries.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+
+            List<DemandEntry> out = new ArrayList<>();
+            for (Map.Entry<String, Integer> e : entries) {
+                String isbn = e.getKey();
+                int c = e.getValue();
+                String title = "(unknown)";
+                if (repo.getMetadata().containsKey(isbn)) {
+                    String[] m = repo.getMetadata().get(isbn);
+                    if (m != null && m.length > 0 && !m[0].isEmpty()) title = m[0];
+                }
+                out.add(new DemandEntry(isbn, title, c));
+            }
+            cache.fullDemandIndex = out;
         }
-        return out;
+        int limit = Math.min(topN, cache.fullDemandIndex.size());
+        return cache.fullDemandIndex.subList(0, limit);
+
     }
 
     private String normalizeIsbn(String raw) {
