@@ -1,5 +1,6 @@
 package marketplace.processor;
 import marketplace.common.*;
+import marketplace.data.CSVRepository;
 
 import java.util.*;
 
@@ -8,25 +9,22 @@ import java.util.*;
  * Holds the domain data and implements the core operations.
  */
 public class MarketplaceService {
-    private final List<TextbookListing> listings;
-    private final Map<String, String[]> metadata;
-    private final Map<String, Double> market;
 
-    public MarketplaceService(List<TextbookListing> listings, Map<String, String[]> metadata, Map<String, Double> market) {
-        this.listings = (listings == null) ? Collections.emptyList() : listings;
-        this.metadata = (metadata == null) ? Collections.emptyMap() : metadata;
-        this.market = (market == null) ? Collections.emptyMap() : market;
+    private final CSVRepository repo;
+
+    public MarketplaceService(CSVRepository repo) {
+        this.repo = repo;
     }
 
     public int getTotalListingsCount() {
-        return listings.size();
+        return repo.getListings().size();
     }
 
     //gets the average price by course
     public List<CourseSummary> averagePriceByCourse() {
         Map<String, Double> sum = new HashMap<>();
         Map<String, Integer> cnt = new HashMap<>();
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             String course = (t.getCourseNumber() == null || t.getCourseNumber().isEmpty()) ? "<unknown>" : t.getCourseNumber();
             sum.put(course, sum.getOrDefault(course, 0.0) + t.getPrice());
             cnt.put(course, cnt.getOrDefault(course, 0) + 1);
@@ -44,7 +42,7 @@ public class MarketplaceService {
     public List<MarketComparison> studentVsMarketComparison() {
         Map<String, Double> sum = new HashMap<>();
         Map<String, Integer> cnt = new HashMap<>();
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             String isbn = normalizeIsbn(t.getIsbn());
             sum.put(isbn, sum.getOrDefault(isbn, 0.0) + t.getPrice());
             cnt.put(isbn, cnt.getOrDefault(isbn, 0) + 1);
@@ -53,10 +51,10 @@ public class MarketplaceService {
         List<MarketComparison> out = new ArrayList<>();
         for (String isbn : sum.keySet()) {
             double avgStudent = sum.get(isbn) / cnt.get(isbn);
-            Double marketAvg = market.get(isbn);
+            Double marketAvg = repo.getMarket().get(isbn);
             String title = "(unknown)";
-            if (metadata.containsKey(isbn)) {
-                String[] m = metadata.get(isbn);
+            if (repo.getMetadata().containsKey(isbn)) {
+                String[] m = repo.getMetadata().get(isbn);
                 if (m != null && m.length > 0 && !m[0].isEmpty()) title = m[0];
             }
             out.add(new MarketComparison(isbn, title, avgStudent, marketAvg, cnt.get(isbn)));
@@ -67,7 +65,7 @@ public class MarketplaceService {
 
     public Map<String, TextbookListing> cheapestListingByCondition() {
         Map<String, TextbookListing> best = new HashMap<>();
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             String cond = (t.getCondition() == null) ? "unknown" : t.getCondition().toLowerCase();
             if (!best.containsKey(cond) || t.getPrice() < best.get(cond).getPrice()) {
                 best.put(cond, t);
@@ -79,9 +77,9 @@ public class MarketplaceService {
     public FairnessResult marketFairnessScore() {
         int totalComparable = 0;
         int within10 = 0;
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             String isbn = normalizeIsbn(t.getIsbn());
-            Double m = market.get(isbn);
+            Double m = repo.getMarket().get(isbn);
             if (m == null || m == 0) continue;
             totalComparable++;
             double rel = Math.abs(t.getPrice() - m) / m;
@@ -94,7 +92,7 @@ public class MarketplaceService {
     public Map<TextbookListing, List<TextbookListing>> barterCompatibilityFinder() {
         Map<String, List<TextbookListing>> byIsbn = new HashMap<>();
         Map<String, List<TextbookListing>> byCourse = new HashMap<>();
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             String isbn = normalizeIsbn(t.getIsbn());
             byIsbn.computeIfAbsent(isbn, k -> new ArrayList<>()).add(t);
             String course = (t.getCourseNumber() == null) ? "" : t.getCourseNumber();
@@ -102,7 +100,7 @@ public class MarketplaceService {
         }
 
         Map<TextbookListing, List<TextbookListing>> result = new LinkedHashMap<>();
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             if (!t.isAcceptsBarter()) continue;
             String isbn = normalizeIsbn(t.getIsbn());
             List<TextbookListing> candidates = new ArrayList<>();
@@ -121,7 +119,7 @@ public class MarketplaceService {
 
     public List<DemandEntry> demandIndex(int topN) {
         Map<String, Integer> counts = new HashMap<>();
-        for (TextbookListing t : listings) {
+        for (TextbookListing t : repo.getListings()) {
             String isbn = normalizeIsbn(t.getIsbn());
             counts.put(isbn, counts.getOrDefault(isbn, 0) + 1);
         }
@@ -136,8 +134,8 @@ public class MarketplaceService {
             String isbn = e.getKey();
             int c = e.getValue();
             String title = "(unknown)";
-            if (metadata.containsKey(isbn)) {
-                String[] m = metadata.get(isbn);
+            if (repo.getMetadata().containsKey(isbn)) {
+                String[] m = repo.getMetadata().get(isbn);
                 if (m != null && m.length > 0 && !m[0].isEmpty()) title = m[0];
             }
             out.add(new DemandEntry(isbn, title, c));
