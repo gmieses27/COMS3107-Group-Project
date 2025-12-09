@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CSVRepository {
 
@@ -19,9 +22,26 @@ public class CSVRepository {
     private Map<String, Double> market;
 
     private CSVRepository(String listPath, String metaPath, String marketPath){
-        this.listings = loadListings(listPath);
-        this.metadata = loadMetadata(metaPath);
-        this.market = loadMarket(marketPath);
+        //runs loading in parallel using threads
+        ExecutorService es = Executors.newFixedThreadPool(3);
+
+        //runs the following in parallel using futures and
+
+        Future<List<TextbookListing>> fListings = es.submit(() -> loadListings(listPath));
+        Future<Map<String, String[]>> fMetadata = es.submit(() -> loadMetadata(metaPath));
+        Future<Map<String, Double>> fMarket = es.submit(() -> loadMarket(marketPath));
+
+        try{
+            this.listings = fListings.get();
+            this.metadata = fMetadata.get();
+            this.market = fMarket.get();
+        }
+        catch(Exception e){
+            throw new RuntimeException("CRITICAL: Failed to initialize data repository", e);
+        }
+        finally {
+            es.shutdown();
+        }
     }
 
     public static CSVRepository getInstance(){
