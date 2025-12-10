@@ -15,6 +15,9 @@ public class MarketplaceService {
     private FairnessStrategy fs = new StandardStrategy();
 
     public MarketplaceService(CSVRepository repo) {
+        if (repo == null) {
+            throw new IllegalArgumentException("Repository cannot be null");
+        }
         this.repo = repo;
         this.cache = new ServiceCache();
     }
@@ -179,5 +182,9 @@ public class MarketplaceService {
     private String normalizeIsbn(String raw) {
         if (raw == null) return "";
         return raw.replaceAll("[^0-9Xx]", "").toUpperCase();
+    }
+
+    public FairnessStrategy getStrategy(){
+        return fs;
     }
 }
