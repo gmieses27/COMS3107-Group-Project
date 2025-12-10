@@ -1,4 +1,31 @@
 ISBN,Title,Edition,Condition,Price,CourseNumber,SellerID,BarterfFlag
-978-0-13-468599-1,Clean Code,2,good,45.99,COMS3107,S001,true
-978-0-13-468599-1,Clean Code,2,fair,38.50,COMS3107,S002,false
-978-0-134-68599-2,The Pragmatic Programmer,2,good,35.75,COMS3107,S003,false
+9781509858637,This is Going to Hurt,1,excellent,9.99,COMS3107,S001,true
+9781509858637,This is Going to Hurt,1,good,7.50,COMS3107,S002,false
+9781509858637,This is Going to Hurt,1,fair,5.99,COMS3107,S003,false
+9780141033570,Thinking Fast and Slow,1,good,14.99,COMS3107,S004,true
+9780141033570,Thinking Fast and Slow,1,fair,11.00,COMS3107,S005,false
+9780141033570,Thinking Fast and Slow,1,poor,8.50,COMS3107,S006,false
+9781784701994,When Breath Becomes Air,1,excellent,12.99,COMS3107,S007,true
+9781784701994,When Breath Becomes Air,1,good,9.75,COMS3107,S008,false
+9781845298258,The Happiness Trap,2,good,10.50,COMS3107,S009,false
+9781845298258,The Happiness Trap,2,fair,7.99,COMS3107,S010,false
+9781846041242,Man's Search For Meaning,1,excellent,13.50,COMS3107,S011,true
+9781846041242,Man's Search For Meaning,1,good,9.99,COMS3107,S012,false
+9780330523622,The Man Who Mistook His Wife for a Hat,1,good,6.50,COMS3107,S013,false
+9781780722405,The 8-week Blood Sugar Diet,1,fair,8.00,COMS3107,S014,true
+9781780723044,The Clever Guts Diet,1,good,9.50,COMS3107,S015,false
+9780241351642,12 Rules for Life,1,excellent,22.99,COMS3107,S016,true
+9780241351642,12 Rules for Life,1,good,18.50,COMS3107,S017,false
+9780241351642,12 Rules for Life,1,fair,14.99,COMS3107,S018,false
+9781846685828,Being Mortal,1,good,11.00,COMS3107,S019,false
+9781925228601,Gut,1,excellent,13.50,COMS3107,S020,true
+9780141038872,The Brain That Changes Itself,1,good,12.99,COMS3107,S021,false
+9781401954406,Medical Medium Liver Rescue,1,excellent,25.99,COMS3107,S022,true
+9781401954406,Medical Medium Liver Rescue,1,good,20.00,COMS3107,S023,false
+9780141976143,Wreck This Journal,1,fair,8.50,COMS3107,S024,true
+9780241351635,12 Rules for Life Hardcover,1,excellent,24.99,COMS3107,S025,false
+9780241351635,12 Rules for Life Hardcover,1,good,19.50,COMS3107,S026,true
+9780141988511,12 Rules for Life,2,good,10.99,COMS3107,S027,false
+9780954852023,Gut and Psychology Syndrome,1,excellent,23.50,COMS3107,S028,true
+9780954852023,Gut and Psychology Syndrome,1,good,18.99,COMS3107,S029,false
+9781401948368,Medical Medium Thyroid Healing,1,good,17.99,COMS3107,S030,false
