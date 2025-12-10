@@ -22,6 +22,7 @@ public class MarketplacePrinter {
         System.out.println("5. Market Fairness Score");
         System.out.println("6. Barter Compatibility Finder");
         System.out.println("7. Book Demand Index");
+        System.out.println("8. Switch Fairness Mode");
         System.out.println("0. Exit");
     }
 
@@ -83,7 +84,7 @@ public class MarketplacePrinter {
             System.out.println("No listings with matching market data.");
             return;
         }
-        System.out.printf("Listings within +/-10%% of market: %d/%d => fairness=%.1f%% %n", res.within10, res.totalComparable, res.percentWithin10);
+        System.out.printf("Listings within +/-%% of market: %d/%d => fairness=%.1f%% %n", res.within10, res.totalComparable, res.percentWithin10);
     }
 
     public void printBarterMatches(Map<TextbookListing, List<TextbookListing>> matches) {
@@ -123,6 +124,16 @@ public class MarketplacePrinter {
         }
     }
 
+    public void printFairnessOptions() {
+        System.out.println("\n--- Configure Fairness Strategy ---");
+        System.out.println("1) Standard (Within 10% of market price)");
+        System.out.println("2) Lenient (Within 20% of market price)");
+        System.out.print("Select an option: ");
+    }
+
+    public void printStrategyUpdate(String strategyName) {
+        System.out.println(">> Success: Fairness strategy updated to '" + strategyName);
+    }
     public void printError(String msg) {
         System.err.println("Error: " + msg);
     }

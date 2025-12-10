@@ -1,4 +1,6 @@
-package main;
+package marketplace.data;
+
+import marketplace.common.TextbookListing;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,7 +24,7 @@ public class CSVFileReader {
                     isHeader = false;
                     continue;
                 }
-
+                //might cause issues if name of textbook includes a , we might need to fix it
                 String[] parts = line.split(",");
                 if (parts.length < 8) continue;
 
@@ -104,6 +106,7 @@ public class CSVFileReader {
         return metadata;
     }
 
+    //might want to edit to work with averages of market not highest value
     public static Map<String, Double> readMarketPrices(String filePath) throws IOException {
         Map<String, Double> sumMap = new HashMap<>();
         Map<String, Integer> countMap = new HashMap<>();
@@ -117,6 +120,10 @@ public class CSVFileReader {
             for (int i = 0; i < headerCols.size(); i++) {
                 String h = headerCols.get(i).trim().toLowerCase();
                 if (h.contains("isbn")) isbnIdx = i;
+                //use avgerage price instead
+//                if (h.contains("average") || h.contains("avg")){
+//                    priceIdx = i;
+//                }
                 if (h.contains("price") || h.contains("market")) priceIdx = i;
             }
 

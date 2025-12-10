@@ -1,5 +1,8 @@
 package marketplace.ui;
+import marketplace.processor.LenientStrategy;
 import marketplace.processor.MarketplaceService; // Or MarketplaceProcessor if you renamed it
+import marketplace.processor.StandardStrategy;
+
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -24,7 +27,7 @@ public class ConsoleMenu {
             try {
                 choice = Integer.parseInt(line);
             } catch (NumberFormatException ex) {
-                System.out.println("Invalid input. Please enter a number between 0 and 7.");
+                System.out.println("Invalid input. Please enter a number between 0 and 8.");
                 continue;
             }
 
@@ -54,8 +57,26 @@ public class ConsoleMenu {
                 case 7:
                     printer.printDemandIndex(processor.demandIndex(10));
                     break;
+                case 8:
+                    // 1. Ask the Printer to display the options
+                    printer.printFairnessOptions();
+                    int mode = -1;
+                    try {
+                        mode = Integer.parseInt(scanner.nextLine().trim());
+                    } catch (NumberFormatException e) {
+                        mode = -1; // Invalid handling
+                    }
+                    if (mode == 2) {
+                        processor.setStrategy(new LenientStrategy());
+                        printer.printStrategyUpdate("Lenient");
+                    } else {
+                        // Default to Standard for option 1 or invalid input
+                        processor.setStrategy(new StandardStrategy());
+                        printer.printStrategyUpdate("Standard");
+                    }
+                    break;
                 default:
-                    System.out.println("Unknown option. Please choose 0-7.");
+                    System.out.println("Unknown option. Please choose 0-8.");
             }
         }
     }
