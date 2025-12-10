@@ -1,0 +1,4 @@
+ISBN,Title,Edition,Condition,Price,CourseNumber,SellerID,AcceptsBarter
+978-0134685991,Effective Java,3,Good,45.00,CS101,S001,true
+INVALID,DATA,HERE
+978-0132350884,Clean Code,1,Like New,35.50,CS102,S002,false
